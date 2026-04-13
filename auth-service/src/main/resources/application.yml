@@ -1,0 +1,62 @@
+server:
+  port: ${PORT:8082}
+
+spring:
+  application:
+    name: auth-service
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=require
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 20000
+    
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        default_schema: auth
+
+  config:
+    import: "optional:configserver:"
+  rabbitmq:
+   addresses: ${RABBITMQ_URL}
+   username: ${RABBITMQ_USER}
+   password: ${RABBITMQ_PASS}
+   virtual-host: ${RABBITMQ_VHOST}
+   ssl:
+    enabled: true
+
+sendgrid:
+  api-key: ${SENDGRID_API_KEY}
+  from: ${SENDGRID_FROM}
+
+gateway:
+  url: ${GATEWAY_URL}
+frontend:
+  url: ${FRONTEND_URL}  
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000 # 1 día en milisegundos
+logging:
+  level:
+    org.springframework: INFO
+    org.hibernate.SQL: INFO
+management:
+ endpoints:
+  web:
+   exposure:
+    include: health,info,metrics,loggers
+ endpoint:
+  health:
+   show-details: always
+   probes:
+     enabled: true
